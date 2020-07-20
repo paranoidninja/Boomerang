@@ -16,6 +16,8 @@ var cReset = "\033[0m"
 var cGreen = "\033[32m"
 var cYellow = "\033[33m"
 
+var boomerang_version = 0.1
+
 var b_logo = `
   _______________________________________________________            _______________________________________________
  |                                                       ` + cRed + `|uuuuuuuuuu|` + cReset + `                                               |
@@ -115,11 +117,9 @@ func printConnections() {
 func main() {
 
 	flag.Parse()
-	// log.SetFlags(log.Lshortfile | log.Ldate | log.Ltime)
 	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds)
-	// fmt.Printf("\033[32m\u001b[1m")
 	fmt.Println(b_logo)
-	// fmt.Printf("\033[37m\u001b[0m")
+	fmt.Printf(" Boomerang Server v%v\n\n", boomerang_version)
 
 	if !*verbosity {
 		log.SetOutput(ioutil.Discard)
@@ -158,32 +158,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	// func() {
-	// 	for {
-	// 		agentConn, err := agentListener.Accept()
-	// 		if err != nil {
-	// 			log.Println(err)
-	// 			continue
-	// 		}
-	// 		log.Printf("[+] Agent Connected-<><>-%v", agentConn.RemoteAddr().String())
-	// 		connectedAgents = connectedAgents + 1
-	// 		go func() {
-	// 			for {
-	// 				proxyConn, err := proxyListener.Accept()
-	// 				if err != nil {
-	// 					log.Println(err)
-	// 					continue
-	// 				}
-	// 				log.Printf("[+] Proxy Client Connected-<><>-%v", proxyConn.RemoteAddr().String())
-	// 				connectedClients = connectedClients + 1
-	// 				go tunnelProxy2Agent(proxyConn, agentConn)
-	// 				go tunnelAgent2Proxy(proxyConn, agentConn)
-	// 			}
-	// 		}()
-	// 	}
-	// }()
-	// }
 
 	for {
 		agentConn, err := agentListener.Accept()

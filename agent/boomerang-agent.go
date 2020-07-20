@@ -9,20 +9,10 @@ import (
 	"log"
 	"net"
 	"os"
-	"strings"
 	"time"
 )
 
-var b_logo = `
-  ______________________________________________________________
- |                                                              |
- |   (^^^^^^^^^^^^^^^^^^^^)                                     |
- |  (                      )         ########################## |
- | (    boomerang-server    ) <===== #    boomerang-agent     # |
- |  (                      )         ########################## |
- |   (vvvvvvvvvvvvvvvvvvvv)                                     |
- |______________________________________________________________|
-`
+var boomerang_version = 0.1
 
 var agentListenerAddr = flag.String("r", "", "Remote host to connect to, eg: 192.168.0.201:10443")
 var log_file = flag.String("o", "", "output for logging")
@@ -168,6 +158,9 @@ func main() {
 	isInit := true
 
 	if *agentListenerAddr == "" {
+		fmt.Printf("\033[32m\u001b[1m")
+		fmt.Printf(" Boomerang Agent v%v\n\n", boomerang_version)
+		fmt.Printf("\033[37m\u001b[0m")
 		flag.PrintDefaults()
 		return
 	}
@@ -179,13 +172,15 @@ func main() {
 		}
 
 		if isInit {
-			b_logo = strings.Replace(b_logo, "   boomerang-agent     ", fmt.Sprintf("%-23v", agentConn.LocalAddr()), -1)
-			b_logo = strings.Replace(b_logo, "   boomerang-server    ", fmt.Sprintf("%-23s", *agentListenerAddr), -1)
+
 			fmt.Printf("\033[32m\u001b[1m")
-			fmt.Println(b_logo)
+			fmt.Printf(" Boomerang Server v%v\n", boomerang_version)
 			fmt.Printf("\033[37m\u001b[0m")
 
 			if !*verbosity {
+				fmt.Printf("\033[32m\u001b[1m")
+				fmt.Printf(" Connected: %v-<><>-%v\n", agentConn.LocalAddr(), agentConn.RemoteAddr())
+				fmt.Printf("\033[37m\u001b[0m")
 				log.SetOutput(ioutil.Discard)
 				go printConnections()
 			}
