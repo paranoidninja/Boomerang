@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-var boomerang_version = 0.1
+var boomerang_version = 0.2
 
 var agentListenerAddr = flag.String("r", "", "Remote host to connect to, eg: 192.168.0.201:10443")
 var log_file = flag.String("o", "", "output for logging")
@@ -29,6 +29,11 @@ type Tunnel struct {
 	forwarderConn net.Conn
 	closed        bool
 }
+
+var connectHttpRequest = `CONNECT / HTTP/1.1
+User-Agent: BoomerangAgent/` + fmt.Sprintf("%.1f", boomerang_version) + `
+Accept: */*
+Host: `
 
 func accessRefuse(tun *Tunnel) {
 	buf := []byte{0, 0x5b, 0, 0, 0, 0, 0, 0}
@@ -165,9 +170,14 @@ func main() {
 		return
 	}
 
+	connectHttpRequest += *agentListenerAddr + "\r\n\r\n"
 	for {
 		agentConn, err := net.Dial("tcp", *agentListenerAddr)
 		if err != nil {
+			log.Println(err)
+		}
+		bytesWritten, err := agentConn.Write([]byte(connectHttpRequest))
+		if bytesWritten == 0 {
 			log.Println(err)
 		}
 

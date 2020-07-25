@@ -147,25 +147,33 @@ func main() {
 		return
 	}
 
-	log.Println("[+] Listening agent interface", *agentAddr)
+	log.Println("[+] Listening Agent Interface", *agentAddr)
 	agentListener, err := net.Listen("tcp", *agentAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("[+] Listening proxy interface", *proxyAddr)
+	log.Println("[+] Listening Proxy Interface", *proxyAddr)
 	proxyListener, err := net.Listen("tcp", *proxyAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for {
+		buf := make([]byte, defaultBufSize)
 		agentConn, err := agentListener.Accept()
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 		log.Printf("[+] Agent Connected-<><>-%v", agentConn.RemoteAddr().String())
+		bytesRead, err := agentConn.Read(buf[0:])
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		log.Printf("[I] Agent %v Initiated Connection With %v Bytes", agentConn.RemoteAddr(), bytesRead)
+
 		proxyConn, err := proxyListener.Accept()
 		if err != nil {
 			log.Println(err)
