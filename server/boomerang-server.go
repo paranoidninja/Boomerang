@@ -170,7 +170,7 @@ func main() {
 		bytesRead, err := agentConn.Read(buf[0:])
 		if err != nil {
 			log.Println(err)
-			return
+			continue
 		}
 		log.Printf("[I] Agent %v Initiated Connection With %v Bytes", agentConn.RemoteAddr(), bytesRead)
 

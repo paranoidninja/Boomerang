@@ -67,6 +67,10 @@ func serveInternalTunnel(tun *Tunnel) {
 		}
 		totalBytesOut += bytesWritten
 		log.Printf("[+] %v Bytes Written To Boomerang Server %v", bytesWritten, tun.agentConn.RemoteAddr())
+		if bytesWritten == 0 {
+			tun.closed = true
+			return
+		}
 	}
 }
 
@@ -175,6 +179,7 @@ func main() {
 		agentConn, err := net.Dial("tcp", *agentListenerAddr)
 		if err != nil {
 			log.Println(err)
+			continue
 		}
 		bytesWritten, err := agentConn.Write([]byte(connectHttpRequest))
 		if bytesWritten == 0 {
